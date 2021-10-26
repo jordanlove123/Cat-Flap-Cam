@@ -1,5 +1,6 @@
 from PIL import Image
 import numpy as np
+import math
 
 key = {
     "1" : "a",
@@ -59,21 +60,23 @@ def newLayer(newLength, oldLayer):
 
     biases = np.random.randint(low=-10, high=10, size=(newLength,))
   
-    newLayer = np.matMul(weights, oldLayer)
+    newLayer = weights@oldLayer
     newLayer = np.add(newLayer, biases)
-    for i in range(len(newLayer)):
+    for i in newLayer:
+        i = round(i, 10)
         i = sigmoid(i)
 
     return newLayer, weights, biases
 
 def sigmoid(x):
-    return 1/(1+np.e**-x)
+    return round(1/(1+math.exp(-x)), 10)
 
 if __name__ == "__main__":
     img = Image.open("img.jpg")
     print("Processing image... ")
     bitmap = processImage(img)
     print("Image processed")
+    print(bitmap)
     print("Creating layer 1... ")
     layer1, weights1, biases1 = newLayer(32, bitmap)
     print("Layer 1 complete")
@@ -90,4 +93,5 @@ if __name__ == "__main__":
         if layer3[i] > greatest:
             greatest = i
   
-    print("Result: " + key[str(greatest)])
+    #print("Result: " + key[str(greatest)])
+    print(layer3)
