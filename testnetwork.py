@@ -1,6 +1,7 @@
 from PIL import Image
 import numpy as np
-import math
+import warnings
+warnings.filterwarnings("ignore", category = RuntimeWarning) 
 
 key = {
     "1" : "a",
@@ -55,28 +56,37 @@ def processImage(img):
     return bitmap
 
 def newLayer(newLength, oldLayer):
-    weights = np.random.uniform(low=-5, high=5, size=(newLength*len(oldLayer)))
-    weights = np.array(weights).reshape((newLength, len(oldLayer)))
+    weights = np.random.normal(loc=0, scale=5.0, size=(newLength, len(oldLayer)))
 
     biases = np.random.randint(low=-10, high=10, size=(newLength,))
   
     newLayer = weights@oldLayer
     newLayer = np.add(newLayer, biases)
-    for i in newLayer:
-        i = round(i, 10)
-        i = sigmoid(i)
+    for i in range(len(newLayer)):
+        newLayer[i] = round(newLayer[i], 10)
+        newLayer[i] = sigmoid(newLayer[i])
 
     return newLayer, weights, biases
 
+def cost(actual, result):
+    total = 0;
+
+    for i in range(len(result)):
+        if i == actual - 1:
+            total += (result[i] - 1)**2
+        else:
+            total += (result[i] - 1)**2
+
+    return total
+
 def sigmoid(x):
-    return round(1/(1+math.exp(-x)), 10)
+    return round(1/(1+(np.e**(-x))), 10)
 
 if __name__ == "__main__":
     img = Image.open("img.jpg")
     print("Processing image... ")
     bitmap = processImage(img)
     print("Image processed")
-    print(bitmap)
     print("Creating layer 1... ")
     layer1, weights1, biases1 = newLayer(32, bitmap)
     print("Layer 1 complete")
@@ -87,11 +97,14 @@ if __name__ == "__main__":
     layer3, weights3, biases3 = newLayer(26, layer2)
     print("Layer 3 complete")
 
-    greatest = layer3[0]
+    greatestNum = layer3[0]
+    greatestIndex = 0
 
     for i in range(len(layer3)):
-        if layer3[i] > greatest:
-            greatest = i
+        if layer3[i] > greatestNum:
+            greatestNum = layer3[i]
+            greatestIndex = i
   
-    #print("Result: " + key[str(greatest)])
-    print(layer3)
+    cost = cost(5, layer3)
+    print("Result: " + key[str(greatestIndex+1)])
+    print("Cost: " + str(cost))
