@@ -13,4 +13,4 @@ These libraries can be installed using pip with the following format:
 ```
 pip install <library>
 ```
-__Note: installing tensorflow requires creating a virtual environment. Instructions to do so can be found [here](https://www.tensorflow.org/install/pip#windows).__
+__Note: Installing tensorflow requires creating a virtual environment. Instructions to do so can be found [here](https://www.tensorflow.org/install/pip#windows).__
